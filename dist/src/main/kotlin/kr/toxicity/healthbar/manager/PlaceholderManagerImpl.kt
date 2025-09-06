@@ -14,6 +14,8 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
+import org.zuma.examplePlugin.RuneQuestPlugin
+import org.zuma.examplePlugin.domain.mob.base.CombatantMob
 import java.util.function.Function
 
 object PlaceholderManagerImpl : PlaceholderManager, BetterHealthBerManager {
@@ -42,6 +44,23 @@ object PlaceholderManagerImpl : PlaceholderManager, BetterHealthBerManager {
             }
             addPlaceholder("entity_name") { e: HealthBarCreateEvent ->
                 e.entity.entity().name
+            }
+            addPlaceholder("runeheim_entity_name") { e: HealthBarCreateEvent ->
+                RuneQuestPlugin.getMobRegistry().getMob(e.entity.entity())?.displayName ?: ""
+            }
+            addPlaceholder("runeheim_entity_lvl") { e: HealthBarCreateEvent ->
+                val entity = e.entity.entity()
+                val mob = RuneQuestPlugin.getMobRegistry().getMob(entity)
+                val player = RuneQuestPlugin.getPlayerManager().getRunePlayer(entity.uniqueId)
+                val mountLevel = RuneQuestPlugin.getMountHandler().getMountLevel(entity.uniqueId);
+
+                when {
+                    mountLevel != -1 -> mountLevel.toString()
+                    player != null -> player.combatLvl.toString()
+                    mob is CombatantMob -> mob.combatLvl.toString()
+                    mob == null -> "Unknown"
+                    else -> "-"
+                }
             }
         }
         PlaceholderContainer.BOOL.run {
