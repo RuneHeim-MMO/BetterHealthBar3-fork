@@ -64,6 +64,15 @@ fun Project.paper() = dependency("io.papermc.paper:paper-api:$minecraft-R0.1-SNA
 
 val api = project("api").spigot()
 
+tasks.register("printClasspath") {
+    doLast {
+        println("Compile classpath files:")
+        configurations.compileClasspath.get().files.forEach {
+            println(it.absolutePath)
+        }
+    }
+}
+
 fun getApiDependencyProject(name: String) = project(name).dependency(api)
 
 val dist = getApiDependencyProject("dist").spigot()
@@ -185,5 +194,13 @@ tasks {
     }
     build {
         finalizedBy(sourceJar, dokkaJar)
+    }
+
+    project(":dist").dependencies {
+        // compile‑only (won’t package it inside your plugin)
+        compileOnly(files("$rootDir/libs/RuneQuestCore.jar"))
+
+        // if you need it at runtime (e.g. the server must see it too), use:
+        // runtimeOnly(files("$rootDir/libs/RuneQuestCore.jar"))
     }
 }

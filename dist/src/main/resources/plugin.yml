@@ -25,6 +25,7 @@ softdepend:
   - skript-reflect
   - LevelledMobs
   - Parties
+  - RuneQuest-Core
 commands:
   healthbar:
     aliases: hb
