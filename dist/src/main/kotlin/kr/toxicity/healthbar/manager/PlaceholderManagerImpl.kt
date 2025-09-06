@@ -16,6 +16,8 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
 import org.zuma.examplePlugin.RuneQuestPlugin
 import org.zuma.examplePlugin.domain.mob.base.CombatantMob
+import org.zuma.examplePlugin.domain.mount.ActiveMountData
+import java.util.UUID
 import java.util.function.Function
 
 object PlaceholderManagerImpl : PlaceholderManager, BetterHealthBerManager {
@@ -46,16 +48,23 @@ object PlaceholderManagerImpl : PlaceholderManager, BetterHealthBerManager {
                 e.entity.entity().name
             }
             addPlaceholder("runeheim_entity_name") { e: HealthBarCreateEvent ->
-                RuneQuestPlugin.getMobRegistry().getMob(e.entity.entity())?.displayName ?: ""
+                val mobName = RuneQuestPlugin.getMobRegistry().getMob(e.entity.entity())?.displayName ?: "test"
+                val activeMount: ActiveMountData? = RuneQuestPlugin.getMountHandler().getMountData(e.entity.entity().uniqueId)
+
+                when {
+                    activeMount != null -> activeMount.state()?.name ?: mobName
+                    mobName != "" -> mobName
+                    else -> ""
+                }
             }
             addPlaceholder("runeheim_entity_lvl") { e: HealthBarCreateEvent ->
                 val entity = e.entity.entity()
                 val mob = RuneQuestPlugin.getMobRegistry().getMob(entity)
                 val player = RuneQuestPlugin.getPlayerManager().getRunePlayer(entity.uniqueId)
-                val mountLevel = RuneQuestPlugin.getMountHandler().getMountLevel(entity.uniqueId);
+                val activeMount = RuneQuestPlugin.getMountHandler().getMountData(entity.uniqueId);
 
                 when {
-                    mountLevel != -1 -> mountLevel.toString()
+                    activeMount != null -> activeMount.level().toString()
                     player != null -> player.combatLvl.toString()
                     mob is CombatantMob -> mob.combatLvl.toString()
                     mob == null -> "Unknown"

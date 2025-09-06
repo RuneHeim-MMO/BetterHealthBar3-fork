@@ -197,10 +197,6 @@ tasks {
     }
 
     project(":dist").dependencies {
-        // compile‑only (won’t package it inside your plugin)
-        compileOnly(files("$rootDir/libs/RuneQuestCore.jar"))
-
-        // if you need it at runtime (e.g. the server must see it too), use:
-        // runtimeOnly(files("$rootDir/libs/RuneQuestCore.jar"))
+        compileOnly(files("$rootDir/libs/dev-core.jar"))
     }
 }
