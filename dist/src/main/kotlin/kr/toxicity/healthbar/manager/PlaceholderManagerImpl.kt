@@ -48,7 +48,7 @@ object PlaceholderManagerImpl : PlaceholderManager, BetterHealthBerManager {
                 e.entity.entity().name
             }
             addPlaceholder("runeheim_entity_name") { e: HealthBarCreateEvent ->
-                val mobName = RuneQuestPlugin.getMobRegistry().getMob(e.entity.entity())?.displayName ?: "test"
+                val mobName = RuneQuestPlugin.getMobRegistry().getMob(e.entity.entity())?.displayName ?: ""
                 val activeMount: ActiveMountData? = RuneQuestPlugin.getMountHandler().getMountData(e.entity.entity().uniqueId)
 
                 when {
